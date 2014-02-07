@@ -318,10 +318,16 @@ class RecentActions(DashboardModule):
                         app_label, model = contenttype.split('.')
                     except:
                         raise ValueError('Invalid contenttype: "%s"' % contenttype)
-                    current_qset = Q(
-                        content_type__app_label=app_label,
-                        content_type__model=model
-                    )
+                    # dmk 2/7/14 changed so you could use includes for recent actions
+                    if model == '*':
+                        current_qset = Q(
+                            content_type__app_label=app_label,
+                        )
+                    else:
+                        current_qset = Q(
+                            content_type__app_label=app_label,
+                            content_type__model=model.lower()
+                        )
                 if qset is None:
                     qset = current_qset
                 else:
